@@ -1,5 +1,31 @@
 #include "shell.h"
 
+void 	build_path(t_shell *ptr, char **env)
+{
+	int	ret;
+
+	ret = access(ptr->len, F_OK);
+	if (ret == -1)
+		perror(av[0]);
+	else if (ret == 0)
+		return;
+
+}
+
+/**
+ * init_material - init the struct with default values
+ * @ptr: the addrs of the struct
+ * @env: the enviremnet variable
+ * @av: list of argument
+ */
+
+void	init_material(t_sehll *ptr, char **env, char **av)
+{
+	ptr->len = 0;
+	ptr->av = av;
+	build_path(ptr, env);
+}
+
 /**
  * main - the start of the program
  * @ac: the length of the argv
@@ -11,28 +37,26 @@
 int	main(int ac, char **av, char **env)
 {
 	(void)ac;
-	char	*line;
-	size_t	len;
-	ssize_t	read;
-	char	*args[] = {"sh", NULL};
-	int	pid;
+	t_shell	*ptr;
 
-	len = 0;
+	ptr = malloc(sizeof(t_shell));
+	init_material(ptr, env, av);
 	fd_putstr("sh$ ", STDOUT_FILENO);
-	while ((read = getline(&line, &len, stdin)) != -1)
+	while ((ptr->read = getline(&ptr->line, &ptr->len, stdin)) != -1)
 	{
-		pid = fork();
-		if (pid < 0)
+		ptr->pid = fork();
+		if (ptr->pid < 0)
 			perror("fork");
-		if (pid == 0)
+		if (ptr->pid == 0)
 		{
-			line[read - 1] = '\0'; 
-			if (execve(line, args, env) == -1)
+			ptr->line[ptr->read - 1] = '\0'; 
+			if (execve(ptr->line, ptr->args, env) == -1)
 				perror(av[0]);
 		}
 		wait(NULL);
 		fd_putstr("sh$ ", STDOUT_FILENO);
 	}
-	free(line);
+	free(ptr->line);
+	free(ptr);
 	return (0);
 }
