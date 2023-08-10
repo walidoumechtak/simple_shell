@@ -44,6 +44,10 @@ int	main(int ac, char **av, char **env)
 	fd_putstr("sh$ ", STDOUT_FILENO);
 	while ((ptr->read = getline(&ptr->line, &ptr->len, stdin)) != -1)
 	{
+		/*
+		 * Your code should be here env() and exit() 
+		 */
+
 		ptr->pid = fork();
 		if (ptr->pid < 0)
 			perror("fork");
