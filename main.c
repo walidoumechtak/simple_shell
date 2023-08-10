@@ -11,6 +11,24 @@ void 	build_path(t_shell *ptr, char **env)
 		return;
 
 }
+extern char **environ;
+
+/**
+ * builtin_env - Prints the current environment.
+ * Return: Always returns 0.
+ */
+int builtin_env(void)
+{
+    int i = 0;
+
+    while (environ[i])
+    {
+        printf("%s\n", environ[i]);
+        i++;
+    }
+
+    return 0;
+}
 
 /**
  * init_material - init the struct with default values
@@ -38,10 +56,17 @@ int	main(int ac, char **av, char **env)
 {
 	(void)ac;
 	t_shell	*ptr;
+	ssize_t readline;
 
 	ptr = malloc(sizeof(t_shell));
 	init_material(ptr, env, av);
 	fd_putstr("sh$ ", STDOUT_FILENO);
+	readline = getline(&ptr->line, &ptr->len, stdin);
+	if (readline == -1)
+	{
+		printf("Exiting the shell ...\n");
+		return (-1);
+	}
 	while ((ptr->read = getline(&ptr->line, &ptr->len, stdin)) != -1)
 	{
 		ptr->pid = fork();
@@ -56,6 +81,7 @@ int	main(int ac, char **av, char **env)
 		wait(NULL);
 		fd_putstr("sh$ ", STDOUT_FILENO);
 	}
+	builtin_env();
 	free(ptr->line);
 	free(ptr);
 	return (0);

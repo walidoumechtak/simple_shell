@@ -8,6 +8,8 @@
 
 void    fd_putstr(char *str, int fd);
 char    *_substr(char *str, int s, int e);
+int builtin_env(void);
+
 
 /**
  * struct s_shell - a struct that conatains all our vairaible
