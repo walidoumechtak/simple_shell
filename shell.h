@@ -9,6 +9,7 @@
 void    fd_putstr(char *str, int fd);
 char    *_substr(char *str, int s, int e);
 int builtin_env(void);
+char *custom_getline(void);
 
 
 /**

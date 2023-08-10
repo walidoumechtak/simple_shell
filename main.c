@@ -57,6 +57,7 @@ int	main(int ac, char **av, char **env)
 	(void)ac;
 	t_shell	*ptr;
 	ssize_t readline;
+	char *line;
 
 	ptr = malloc(sizeof(t_shell));
 	init_material(ptr, env, av);
@@ -82,7 +83,13 @@ int	main(int ac, char **av, char **env)
 		fd_putstr("sh$ ", STDOUT_FILENO);
 	}
 	builtin_env();
+
 	free(ptr->line);
 	free(ptr);
+
+	while ((line = custom_getline()) != NULL) {
+        	printf("You entered: %s", line);
+        	free(line);
+	}
 	return (0);
 }
