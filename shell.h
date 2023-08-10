@@ -8,7 +8,8 @@
 
 void    fd_putstr(char *str, int fd);
 char    *_substr(char *str, int s, int e);
-
+char	*_strdup(char *str);
+int	_strlen(char *str);
 /**
  * struct s_shell - a struct that conatains all our vairaible
  * @line: the cmd that user enter

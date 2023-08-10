@@ -17,11 +17,13 @@ char	*_substr(char *str, int s, int e)
 	i = 0;
 	if (!str)
 		return (NULL);
+	if (s >= e)
+		return (_strdup(""));
 	size = e - s + 2;
 	res = malloc(size * sizeof(char));
-	while (s <= 4)
+	while (s <= e)
 	{
-		res[i++] = str[s++]
+		res[i++] = str[s++];
 	}
 	res[i] = '\0';
 	return (res);

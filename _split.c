@@ -3,10 +3,11 @@
 /**
  * count_word - funct that calc how many word in string
  * @str: the string
+ * @c: the separator
  * Return: the result as int
  */
 
-int	coutn_word(char *str)
+int	count_word(char *str, char c)
 {
 	int	i;
 	int	res;
@@ -17,15 +18,34 @@ int	coutn_word(char *str)
 		return (0);
 	while (str[i])
 	{
-		if (str[i] != ' ' || str[i] != '\t')
+		if (str[i] != c)
 		{
 			res++;
-			while (str[i] != ' ' && str[i] != '\t')
+			while (str[i] && str[i] != c)
 				i++;
 		}
+		if (!str[i])
+			return (res);
 		i++;
 	}
 	return (res);
+}
+
+/**
+ * free_all - free a two dimen array
+ * @arr: the array
+ * @k: the size of the array
+ */
+
+void	free_all(char **arr, int k)
+{
+	int	i;
+
+	i = 0;
+	while (i < k)
+		free(arr[i++]);
+	free(arr);
+
 }
 
 /**
@@ -41,7 +61,27 @@ char	**_split(char *str, char c)
 	int	i;
 	int	s;
 	int	e;
+	int	k;
 
 	i = 0;
-	arr = malloc(sizeof(char *) * cout_word(str));
+	k = 0;
+	arr = malloc(sizeof(char *) * (count_word(str, c) + 1));
+	while (str[i])
+	{
+		if (str[i] != c)
+		{
+			s = i;
+			while (str[i] && str[i] != c)
+				i++;
+			e = i - 1;
+			arr[k] = _substr(str, s, e);
+			if (!arr[k])
+				free_all(arr, k);
+			k++;
+		}
+		else
+			i++;
+	}
+	arr[k] = NULL;
+	return (arr);
 }
