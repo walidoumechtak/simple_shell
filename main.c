@@ -4,9 +4,14 @@ void 	build_path(t_shell *ptr, char **env)
 {
 	int	ret;
 
+	ptr->args = _split(ptr->len, ' ');
 	ret = access(ptr->len, F_OK);
 	if (ret == -1)
+	{
+		free_split(ptr->args);
+		free(ptr->len);
 		perror(av[0]);
+	}
 	else if (ret == 0)
 		return;
 
@@ -23,7 +28,6 @@ void	init_material(t_sehll *ptr, char **env, char **av)
 {
 	ptr->len = 0;
 	ptr->av = av;
-	build_path(ptr, env);
 }
 
 /**
@@ -48,6 +52,7 @@ int	main(int ac, char **av, char **env)
 		 * Your code should be here env() and exit() 
 		 */
 
+		build_path(ptr, env);
 		ptr->pid = fork();
 		if (ptr->pid < 0)
 			perror("fork");
