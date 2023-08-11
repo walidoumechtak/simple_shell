@@ -1,4 +1,4 @@
-#inlcude "shell.h"
+#include "shell.h"
 
 /**
  * free_split - free an array that allocated with split

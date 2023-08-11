@@ -1,20 +1,51 @@
 #include "shell.h"
 
-void 	build_path(t_shell *ptr, char **env)
+int	build_path(t_shell *ptr, char **env)
 {
 	int	ret;
+	char	*new_cmd;
+	int	i;
+	char	**path;
+	char	*temp;
 
-	ptr->args = _split(ptr->len, ' ');
-	ret = access(ptr->len, F_OK);
+	i = 0;
+	ptr->args = _split(ptr->line, ' ');
+	ret = access(ptr->line, F_OK);
 	if (ret == -1)
 	{
 		free_split(ptr->args);
-		free(ptr->len);
-		perror(av[0]);
+		free(ptr->line);
+		return (-1);
 	}
 	else if (ret == 0)
-		return;
-
+		return (0);
+	while (env[i])
+	{
+		new_cmd = _strstr(env[i], "PATH");
+		if (!new_cmd)
+			i++;
+		else
+			break;
+	}
+	if (env[i] == NULL) // the PATH variable not found
+		return (free_split(ptr->args), -1);
+	path = _split(new_cmd + 5, ':');
+	i = 0;
+	while (path[i])
+	{
+		ret = access(path[i], F_OK);
+		if (ret == -1)
+			return (free_split(path), free(ptr->line), -1);
+		else if (ret == 0)
+		{
+			temp = _strjoin(path[i], ptr->line);
+			free(ptr->line);
+			ptr->line = temp;
+			return (free_split(path), 0);
+		}
+		i++;
+	}
+	return (-2);
 }
 
 /**
@@ -24,8 +55,9 @@ void 	build_path(t_shell *ptr, char **env)
  * @av: list of argument
  */
 
-void	init_material(t_sehll *ptr, char **env, char **av)
+void	init_material(t_shell *ptr, char **env, char **av)
 {
+	(void)env;
 	ptr->len = 0;
 	ptr->av = av;
 }
@@ -52,7 +84,12 @@ int	main(int ac, char **av, char **env)
 		 * Your code should be here env() and exit() 
 		 */
 
-		build_path(ptr, env);
+		if (build_path(ptr, env) == -1)
+		{
+			perror(av[0]);
+			free(ptr->line);
+			continue;
+		}
 		ptr->pid = fork();
 		if (ptr->pid < 0)
 			perror("fork");
@@ -63,6 +100,7 @@ int	main(int ac, char **av, char **env)
 				perror(av[0]);
 		}
 		wait(NULL);
+		free_split(ptr->args);
 		fd_putstr("sh$ ", STDOUT_FILENO);
 	}
 	free(ptr->line);

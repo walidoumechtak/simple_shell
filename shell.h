@@ -11,6 +11,9 @@ char    *_substr(char *str, int s, int e);
 char	*_strdup(char *str);
 int	_strlen(char *str);
 void    free_split(char **arr);
+char	*_strjoin(char *s1, char *s2);
+char	**_split(char *str, char c);
+char	*_strstr(char *str, char *needed);
 
 /**
  * struct s_shell - a struct that conatains all our vairaible
@@ -23,6 +26,7 @@ void    free_split(char **arr);
 
 struct s_shell
 {
+	char	**av;
 	char    *line;
 	size_t  len;
 	ssize_t read;

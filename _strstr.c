@@ -9,5 +9,27 @@
 
 char	*_strstr(char *str, char *needed)
 {
+	int	i;
+	int	j;
+	int	temp;
 
+	i = 0;
+	while (str && str[i])
+	{
+		j = 0;
+		if (str[i] == needed[j])
+		{
+			temp = i;
+			while (str[i] && (needed[j] == str[i]))
+			{
+				j++;
+				i++;
+			}
+			if (j == _strlen(needed))
+				return (str + temp);
+			i = temp;
+		}
+		i++;
+	}
+	return (NULL);
 }
