@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * substr - function that cut a string from start to end (index)
+ * _substr - function that cut a string from start to end (index)
  * @str: the string
  * @s: the starting index
  * @e: the last char at index (e)

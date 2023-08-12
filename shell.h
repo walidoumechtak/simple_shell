@@ -14,14 +14,16 @@ void    free_split(char **arr);
 char	*_strjoin(char *s1, char *s2);
 char	**_split(char *str, char c);
 char	*_strstr(char *str, char *needed);
+int	_strcmp(char *s1, char *s2);
 
 /**
  * struct s_shell - a struct that conatains all our vairaible
+ * @av: the argument av for the main func
  * @line: the cmd that user enter
  * @len: the size that should readline read
  * @read: the size that readline return after read
  * @args: two dimen array that conatine the cmds
- * pid: the proccess id when we create it with fork()
+ * @pid: the proccess id when we create it with fork()
  */
 
 struct s_shell
@@ -34,9 +36,7 @@ struct s_shell
 	int     pid;
 };
 
-/**
- * t_shell - Typedef of struct s_shell
- */
+/* t_shell - Typedef of struct s_shell */
 
 typedef struct s_shell t_shell;
 
