@@ -10,14 +10,8 @@ int	build_path(t_shell *ptr, char **env)
 
 	i = 0;
 	ptr->args = _split(ptr->line, ' ');
-	ret = access(ptr->line, F_OK);
-	if (ret == -1)
-	{
-		free_split(ptr->args);
-		free(ptr->line);
-		return (-1);
-	}
-	else if (ret == 0)
+	ret = access(ptr->args[0], F_OK);
+	if (ret == 0)
 		return (0);
 	while (env[i])
 	{
@@ -31,21 +25,17 @@ int	build_path(t_shell *ptr, char **env)
 		return (free_split(ptr->args), -1);
 	path = _split(new_cmd + 5, ':');
 	i = 0;
+	temp = _strjoin("/", ptr->args[0]);
 	while (path[i])
 	{
-		ret = access(path[i], F_OK);
-		if (ret == -1)
-			return (free_split(path), free(ptr->line), -1);
-		else if (ret == 0)
-		{
-			temp = _strjoin(path[i], ptr->line);
-			free(ptr->line);
-			ptr->line = temp;
-			return (free_split(path), 0);
-		}
+		free(ptr->line);
+		ptr->line = _strjoin(path[i], temp);
+		ret = access(ptr->line, F_OK);
+		if (ret == 0)
+			return (free_split(path), free(temp), 0);
 		i++;
 	}
-	return (-2);
+	return (-1);
 }
 
 /**
@@ -55,11 +45,25 @@ int	build_path(t_shell *ptr, char **env)
  * @av: list of argument
  */
 
-void	init_material(t_shell *ptr, char **env, char **av)
+void	init_material(t_shell *ptr, char **av)
 {
-	(void)env;
 	ptr->len = 0;
 	ptr->av = av;
+}
+
+/**
+ * is_built_in - function to execute the built in cmd
+ * @ptr: pointer to the structur
+ * Return: 0 if true or 1 if not
+ */
+
+int	is_built_in(t_shell *ptr)
+{
+	if (_strcmp(ptr->line, "env") == 0)
+		env();
+	else if (_strcmp(ptr->line, "exit") == 0)
+		exit(0);
+	return (1);
 }
 
 /**
@@ -76,26 +80,35 @@ int	main(int ac, char **av, char **env)
 	t_shell	*ptr;
 
 	ptr = malloc(sizeof(t_shell));
-	init_material(ptr, env, av);
+	init_material(ptr, av);
 	fd_putstr("sh$ ", STDOUT_FILENO);
 	while ((ptr->read = getline(&ptr->line, &ptr->len, stdin)) != -1)
 	{
+		if (ptr->line)
+			ptr->line[_strlen(ptr->line) - 1] = '\0';
 		/*
 		 * Your code should be here env() and exit() 
 		 */
-
+		if (is_built_in(ptr) == 0)
+		{
+			free(ptr->line);
+			continue;
+		}
 		if (build_path(ptr, env) == -1)
 		{
-			perror(av[0]);
+			fd_putstr(av[0], 2);
+			fd_putstr(": command not found\n", 2);
 			free(ptr->line);
+			ptr->line = NULL;
+			free_split(ptr->args);
+			fd_putstr("sh$ ", STDOUT_FILENO);
 			continue;
 		}
 		ptr->pid = fork();
 		if (ptr->pid < 0)
 			perror("fork");
 		if (ptr->pid == 0)
-		{
-			ptr->line[ptr->read - 1] = '\0'; 
+		{ 
 			if (execve(ptr->line, ptr->args, env) == -1)
 				perror(av[0]);
 		}
