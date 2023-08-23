@@ -13,6 +13,7 @@ void	init_material(t_shell *ptr, char **av)
 	ptr->av = av;
 	ptr->args = NULL;
 	ptr->exit_s = 0;
+	ptr->line = NULL;
 }
 
 /**
