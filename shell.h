@@ -24,6 +24,9 @@ int	_strcmp(char *s1, char *s2);
  * @read: the size that readline return after read
  * @args: two dimen array that conatine the cmds
  * @pid: the proccess id when we create it with fork()
+ * @exit_s: the exit status
+ * @ret: retrn value
+ * @error: index of error
  */
 
 struct s_shell
@@ -46,5 +49,6 @@ typedef struct s_shell t_shell;
 int	build_path(t_shell *ptr, char **env);
 void	_putchar(char c);
 void	_putnbr(int nb);
+int	is_built_in(t_shell *ptr, char **env);
 
 #endif /* SHELL_H */

@@ -14,39 +14,7 @@ void	init_material(t_shell *ptr, char **av)
 	ptr->args = NULL;
 	ptr->exit_s = 0;
 	ptr->line = NULL;
-	ptr->error = 0;
-}
-
-/**
- * is_built_in - function to execute the built in cmd
- * @ptr: pointer to the structur
- * @env: the envirement
- * Return: 0 if true or 1 if not
- */
-
-int	is_built_in(t_shell *ptr, char **env)
-{
-	int	i;
-
-	i = 0;
-	if (_strcmp(ptr->line, "env") == 0)
-	{
-		while (env[i])
-		{
-			fd_putstr(env[i], 1);
-			fd_putstr("\n", 1);
-			i++;
-		}
-		return (0);
-	}
-	else if (_strcmp(ptr->line, "exit") == 0)
-	{
-		free(ptr->line);
-		if (ptr->args)
-			free_split(ptr->args);
-		exit(ptr->exit_s);
-	}
-	return (1);
+	ptr->error = 1;
 }
 
 /**
@@ -63,6 +31,31 @@ void	end_program(t_shell *ptr, int ac)
 		free_split(ptr->args);
 	free(ptr);
 }
+
+/**
+ * handle_error - handle error
+ * @ptr: the pointer to the structur
+ */
+
+void	handle_error(t_shell *ptr)
+{
+	if (ptr->ret != 404)
+	{
+		fd_putstr(ptr->av[0], 2);
+		fd_putstr(": ", 2);
+		_putnbr(ptr->error);
+		fd_putstr(": ", 2);
+		fd_putstr(ptr->line, 2);
+		fd_putstr(": not found\n", 2);
+		ptr->exit_s = 127;
+	}
+	free(ptr->line);
+	ptr->line = NULL;
+	free_split(ptr->args);
+	ptr->args = NULL;
+	ptr->error++;
+}
+
 /**
  * main - the start of the program
  * @ac: the length of the argv
@@ -80,7 +73,7 @@ int	main(int ac, char **av, char **env)
 	while ((ptr->read = getline(&ptr->line, &ptr->len, stdin)) != -1)
 	{
 		if (ptr->line)
-			ptr->line[_strlen(ptr->line) - 1] = '\0';	
+			ptr->line[_strlen(ptr->line) - 1] = '\0';
 		if (is_built_in(ptr, env) == 0)
 		{
 			free(ptr->line);
@@ -90,21 +83,7 @@ int	main(int ac, char **av, char **env)
 		ptr->ret = build_path(ptr, env);
 		if (ptr->ret == -1 || ptr->ret == 404)
 		{
-			if (ptr->ret != 404)
-			{
-				fd_putstr(av[0], 2);
-				fd_putstr(": ", 2);
-				_putnbr(ptr->error);
-				fd_putstr(": ", 2);
-				fd_putstr(ptr->line, 2);
-				fd_putstr(": not found\n", 2);
-				ptr->exit_s = 127;
-			}
-			free(ptr->line);
-			ptr->line = NULL;
-			free_split(ptr->args);
-			ptr->args = NULL;
-			ptr->error++;
+			handle_error(ptr);
 			continue;
 		}
 		ptr->pid = fork();
