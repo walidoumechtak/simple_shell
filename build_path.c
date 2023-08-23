@@ -50,6 +50,8 @@ int	build_path(t_shell *ptr, char **env)
 	i = 0;
 	new_cmd = NULL;
 	ptr->args = _split(ptr->line, ' ');
+	if (!ptr->args[0])
+		return (404);
 	ret = access(ptr->args[0], F_OK);
 	if (ret == 0)
 	{

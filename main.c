@@ -9,6 +9,7 @@
 void	init_material(t_shell *ptr, char **av)
 {
 	ptr->len = 0;
+	ptr->ret = 0;
 	ptr->av = av;
 	ptr->args = NULL;
 	ptr->exit_s = 0;
@@ -77,18 +78,22 @@ int	main(int ac, char **av, char **env)
 	while ((ptr->read = getline(&ptr->line, &ptr->len, stdin)) != -1)
 	{
 		if (ptr->line)
-			ptr->line[_strlen(ptr->line) - 1] = '\0';
+			ptr->line[_strlen(ptr->line) - 1] = '\0';	
 		if (is_built_in(ptr, env) == 0)
 		{
 			free(ptr->line);
 			ptr->line = NULL;
 			continue;
 		}
-		if (build_path(ptr, env) == -1)
+		ptr->ret = build_path(ptr, env);
+		if (ptr->ret == -1 || ptr->ret == 404)
 		{
-			fd_putstr(av[0], 2);
-			fd_putstr(": command not found\n", 2);
-			ptr->exit_s = 127;
+			if (ptr->ret != 404)
+			{
+				fd_putstr(av[0], 2);
+				fd_putstr(": command not found\n", 2);
+				ptr->exit_s = 127;
+			}
 			free(ptr->line);
 			ptr->line = NULL;
 			free_split(ptr->args);

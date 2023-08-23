@@ -35,6 +35,7 @@ struct s_shell
 	char    **args;
 	int     pid;
 	int	exit_s;
+	int	ret;
 };
 
 /* t_shell - Typedef of struct s_shell */
