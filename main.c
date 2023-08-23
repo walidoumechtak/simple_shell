@@ -104,8 +104,8 @@ int	is_built_in(t_shell *ptr, char **env)
 
 int	main(int ac, char **av, char **env)
 {
-	(void)ac;
 	t_shell	*ptr;
+	(void)ac;
 
 	ptr = malloc(sizeof(t_shell));
 	init_material(ptr, av);
