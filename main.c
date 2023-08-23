@@ -10,6 +10,8 @@
 int	build_path(t_shell *ptr, char **env)
 {
 	int	ret;
+	int	cmp;
+	char	**check;
 	char	*new_cmd;
 	int	i;
 	char	**path;
@@ -22,18 +24,21 @@ int	build_path(t_shell *ptr, char **env)
 		return (0);
 	while (env[i])
 	{
-		new_cmd = _strstr(env[i], "PATH");
-		if (!new_cmd)
+		check = _split(env[i], '=');
+		cmp = _strcmp(check[0], "PATH");
+		if (cmp != 0)
 			i++;
 		else
+		{
+			new_cmd = _strdup(check[1]);
+			free_split(check);
 			break;
+		}
+		free_split(check);
 	}
-	/**
-	 * check if the path exist
-	 */
 	if (env[i] == NULL)
 		return (free_split(ptr->args), -1);
-	path = _split(new_cmd + 5, ':');
+	path = _split(new_cmd, ':');
 	i = 0;
 	temp = _strjoin("/", ptr->args[0]);
 	while (path[i])
