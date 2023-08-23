@@ -65,6 +65,8 @@ char	**_split(char *str, char c)
 
 	i = 0;
 	k = 0;
+	if (!str)
+		return (NULL);
 	arr = malloc(sizeof(char *) * (count_word(str, c) + 1));
 	while (str[i])
 	{
