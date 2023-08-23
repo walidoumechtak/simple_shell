@@ -101,14 +101,16 @@ int	main(int ac, char **av, char **env)
 		if (ptr->pid == 0)
 		{
 			if (execve(ptr->line, ptr->args, env) == -1)
+			{
 				perror(av[0]);
+				exit(2);
+			}
 		}
-		wait(NULL);
+		wait(&ptr->exit_s);
 		free_split(ptr->args);
 		ptr->args = NULL;
 		free(ptr->line);
 		ptr->line = NULL;
-		ptr->exit_s = 0;
 	}
 	end_program(ptr, ac);
 	return (0);
