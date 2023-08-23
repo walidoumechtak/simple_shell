@@ -1,59 +1,6 @@
 #include "shell.h"
 
 /**
- * build_path - build the path of the cmd ls => /bin/ls
- * @ptr: the pointer to the struct
- * @env: the envirment vaiable
- * Return: 0 if the path found -1 if not
- */
-
-int	build_path(t_shell *ptr, char **env)
-{
-	int	ret;
-	int	cmp;
-	char	**check;
-	char	*new_cmd;
-	int	i;
-	char	**path;
-	char	*temp;
-
-	i = 0;
-	ptr->args = _split(ptr->line, ' ');
-	ret = access(ptr->args[0], F_OK);
-	if (ret == 0)
-		return (0);
-	while (env[i])
-	{
-		check = _split(env[i], '=');
-		cmp = _strcmp(check[0], "PATH");
-		if (cmp != 0)
-			i++;
-		else
-		{
-			new_cmd = _strdup(check[1]);
-			free_split(check);
-			break;
-		}
-		free_split(check);
-	}
-	if (env[i] == NULL)
-		return (free_split(ptr->args), -1);
-	path = _split(new_cmd, ':');
-	i = 0;
-	temp = _strjoin("/", ptr->args[0]);
-	while (path[i])
-	{
-		free(ptr->line);
-		ptr->line = _strjoin(path[i], temp);
-		ret = access(ptr->line, F_OK);
-		if (ret == 0)
-			return (free_split(path), free(temp), 0);
-		i++;
-	}
-	return (free_split(path), free(temp), -1);
-}
-
-/**
  * init_material - init the struct with default values
  * @ptr: the addrs of the struct
  * @av: list of argument

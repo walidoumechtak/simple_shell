@@ -40,4 +40,6 @@ struct s_shell
 
 typedef struct s_shell t_shell;
 
+int	build_path(t_shell *ptr, char **env);
+
 #endif /* SHELL_H */
