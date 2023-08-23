@@ -34,6 +34,7 @@ struct s_shell
 	ssize_t read;
 	char    **args;
 	int     pid;
+	int	exit_s;
 };
 
 /* t_shell - Typedef of struct s_shell */

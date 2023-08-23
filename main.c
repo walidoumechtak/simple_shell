@@ -11,6 +11,7 @@ void	init_material(t_shell *ptr, char **av)
 	ptr->len = 0;
 	ptr->av = av;
 	ptr->args = NULL;
+	ptr->exit_s = 0;
 }
 
 /**
@@ -40,7 +41,7 @@ int	is_built_in(t_shell *ptr, char **env)
 		free(ptr->line);
 		if (ptr->args)
 			free_split(ptr->args);
-		exit(0);
+		exit(ptr->exit_s);
 	}
 	return (1);
 }
@@ -87,6 +88,7 @@ int	main(int ac, char **av, char **env)
 		{
 			fd_putstr(av[0], 2);
 			fd_putstr(": command not found\n", 2);
+			ptr->exit_s = 127;
 			free(ptr->line);
 			ptr->line = NULL;
 			free_split(ptr->args);
@@ -106,6 +108,7 @@ int	main(int ac, char **av, char **env)
 		ptr->args = NULL;
 		free(ptr->line);
 		ptr->line = NULL;
+		ptr->exit_s = 0;
 	}
 	end_program(ptr, ac);
 	return (0);
