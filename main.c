@@ -14,6 +14,7 @@ void	init_material(t_shell *ptr, char **av)
 	ptr->args = NULL;
 	ptr->exit_s = 0;
 	ptr->line = NULL;
+	ptr->error = 0;
 }
 
 /**
@@ -92,13 +93,18 @@ int	main(int ac, char **av, char **env)
 			if (ptr->ret != 404)
 			{
 				fd_putstr(av[0], 2);
-				fd_putstr(": command not found\n", 2);
+				fd_putstr(": ", 2);
+				_putnbr(ptr->error);
+				fd_putstr(": ", 2);
+				fd_putstr(ptr->line, 2);
+				fd_putstr(": not found\n", 2);
 				ptr->exit_s = 127;
 			}
 			free(ptr->line);
 			ptr->line = NULL;
 			free_split(ptr->args);
 			ptr->args = NULL;
+			ptr->error++;
 			continue;
 		}
 		ptr->pid = fork();

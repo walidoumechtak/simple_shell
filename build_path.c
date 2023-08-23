@@ -61,7 +61,7 @@ int	build_path(t_shell *ptr, char **env)
 	}
 	i = loop_env(env, &new_cmd);
 	if (env[i] == NULL)
-		return (free_split(ptr->args), -1);
+		return (-1);
 	path = _split(new_cmd, ':');
 	free(new_cmd);
 	i = 0;

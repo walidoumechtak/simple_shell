@@ -36,6 +36,7 @@ struct s_shell
 	int     pid;
 	int	exit_s;
 	int	ret;
+	int	error;
 };
 
 /* t_shell - Typedef of struct s_shell */
@@ -43,5 +44,7 @@ struct s_shell
 typedef struct s_shell t_shell;
 
 int	build_path(t_shell *ptr, char **env);
+void	_putchar(char c);
+void	_putnbr(int nb);
 
 #endif /* SHELL_H */
