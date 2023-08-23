@@ -88,12 +88,25 @@ int	is_built_in(t_shell *ptr, char **env)
 		free(ptr->line);
 		if (ptr->args)
 			free_split(ptr->args);
-		fd_putstr("exit\n", 1);
 		exit(0);
 	}
 	return (1);
 }
 
+/**
+ * end_program - the end of the program
+ * @ptr: the ponter to the struct
+ * @ac: variable for nothing
+ */
+
+void	end_program(t_shell *ptr, int ac)
+{
+	(void)ac;
+	free(ptr->line);
+	if (ptr->args)
+		free_split(ptr->args);
+	free(ptr);
+}
 /**
  * main - the start of the program
  * @ac: the length of the argv
@@ -105,23 +118,17 @@ int	is_built_in(t_shell *ptr, char **env)
 int	main(int ac, char **av, char **env)
 {
 	t_shell	*ptr;
-	(void)ac;
 
 	ptr = malloc(sizeof(t_shell));
 	init_material(ptr, av);
-	fd_putstr("sh$ ", STDOUT_FILENO);
 	while ((ptr->read = getline(&ptr->line, &ptr->len, stdin)) != -1)
 	{
 		if (ptr->line)
 			ptr->line[_strlen(ptr->line) - 1] = '\0';
-		/**
-		 * env() and exit()
-		 */
 		if (is_built_in(ptr, env) == 0)
 		{
 			free(ptr->line);
 			ptr->line = NULL;
-			fd_putstr("sh$ ", STDOUT_FILENO);
 			continue;
 		}
 		if (build_path(ptr, env) == -1)
@@ -132,7 +139,6 @@ int	main(int ac, char **av, char **env)
 			ptr->line = NULL;
 			free_split(ptr->args);
 			ptr->args = NULL;
-			fd_putstr("sh$ ", STDOUT_FILENO);
 			continue;
 		}
 		ptr->pid = fork();
@@ -148,12 +154,7 @@ int	main(int ac, char **av, char **env)
 		ptr->args = NULL;
 		free(ptr->line);
 		ptr->line = NULL;
-		fd_putstr("sh$ ", STDOUT_FILENO);
 	}
-	fd_putstr("exit\n", 1);
-	free(ptr->line);
-	if (ptr->args)
-		free_split(ptr->args);
-	free(ptr);
+	end_program(ptr, ac);
 	return (0);
 }
